@@ -74,6 +74,19 @@ final class AssignmentTests: XCTestCase {
             XCTAssertEqual(retreived.count, assignments.count)
         })
     }
+    
+    /// Tests creating an assignment when wrapped within a JSON array, and not a single object.
+    func testCreateSingleAssignmentFromArray() throws {
+        var assignments: [Assignment] = []
+        let newAssignment = Assignment(agent: "Alex Loren", address: "4230 E Evergreen Drive", submittedOn: Date(), scheduled: false, hidden: false)
+        assignments.append(newAssignment)
+        
+        try app.test(.POST, "/api/assignments/", beforeRequest: { req in
+            try req.content.encode(assignments)
+        }, afterResponse: { response in
+            XCTAssertEqual(response.status, .ok)
+        })
+    }
 	
 	/// Retrieves all hidden assignments from the database.
 	/// Verifies that hidden assignment count matches.

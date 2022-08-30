@@ -81,12 +81,24 @@ struct AssignmentController: RouteCollection {
 	
 	
 	/// Creates a new `Assignment` object and saves it to the database.
+    /// Will attempt to decode a single assignment, if failed will attempt to decode from an array.
 	/// - Parameter req: The `Request` object received.
 	/// - Returns: The newly created `Assignment`.
 	func create(req: Request) async throws -> Assignment {
-		let assignment = try req.content.decode(Assignment.self)
-		try await assignment.save(on: req.db)
-		return assignment
+        do {
+            let assignment = try req.content.decode(Assignment.self)
+            try await assignment.save(on: req.db)
+            return assignment
+        } catch {
+            do {
+                let assignments = try req.content.decode([Assignment].self)
+                let assignment = assignments[0]
+                try await assignment.save(on: req.db)
+                return assignment
+            } catch {
+                throw Abort(.badRequest)
+            }
+        }
 	}
 	
 	
