@@ -25,7 +25,6 @@ struct AssignmentController: RouteCollection {
 		assignments.post("batch", use: batchCreate)
 		assignments.post(":id", "hide", ":hidden", use: hide)
         assignments.post(":id", "schedule", ":scheduled", use: schedule)
-		//assignments.delete(":id", use: delete)
 	}
     
     /// Fetches a limited number of `Assignment` objects from the database.
@@ -177,24 +176,4 @@ struct AssignmentController: RouteCollection {
         try await assignment.update(on: req.db)
         return .ok
     }
-	
-	/*
-	/// Sets the hidden value of the `Assignment` object to `true`. Making the item appear deleted.
-	/// - Parameter req: The `Request` object received.
-	/// - Returns: An `HTTPStatus` value reflecting the success of the "deletion".
-	func delete(req: Request) async throws -> HTTPStatus {
-		guard let id = req.parameters.get("id"),
-			  let uuid = UUID(uuidString: id) else {
-			throw Abort(.badRequest, reason: "No valid 'id' parameter sent with request.")
-		}
-		
-		let assignment = try await Assignment.find(uuid, on: req.db)
-		guard let assignment = assignment else {
-			throw Abort(.notFound)
-		}
-		assignment.hidden = true
-		try await assignment.update(on: req.db)
-		return .ok
-	}
-	*/
 }
