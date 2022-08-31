@@ -61,6 +61,7 @@ struct AssignmentController: RouteCollection {
         }
         
         return try await Assignment.query(on: req.db)
+            .filter(\.$hidden == false)
             .filter(\.$scheduled == scheduled)
             .limit(20)
             .sort(\.$submittedOn, .descending)
