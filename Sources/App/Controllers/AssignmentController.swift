@@ -19,6 +19,7 @@ struct AssignmentController: RouteCollection {
 		assignments.get(use: get)
         assignments.get("all", use: all)
 		assignments.get("hidden", use: hidden)
+        assignments.get("scheduled", ":scheduled", use: scheduled)
 		assignments.get(":id", use: single)
 		assignments.post(use: create)
 		assignments.post("batch", use: batchCreate)
@@ -49,6 +50,23 @@ struct AssignmentController: RouteCollection {
 			.all()
 	}
 	
+    /// Fetches a limited number of `Assignment` objects from the database.
+    /// These objects are all flagged as scheduled.
+    /// - Parameter req: The `Request` object received.
+    /// - Throws: If fails to query from the database.
+    /// - Returns: An array of all the `Assignment` objects.
+    func scheduled(req: Request) async throws -> [Assignment] {
+        guard let rawScheduled = req.parameters.get("scheduled"),
+            let scheduled = Bool(rawScheduled) else {
+            throw Abort(.badRequest, reason: "No valid 'scheduled' parameter sent with request.")
+        }
+        
+        return try await Assignment.query(on: req.db)
+            .filter(\.$scheduled == scheduled)
+            .limit(20)
+            .sort(\.$submittedOn, .descending)
+            .all()
+    }
 	
 	/// Fetches all of the `Assignment` items marked as hidden.
 	/// - Parameter req: The `Request` object received.

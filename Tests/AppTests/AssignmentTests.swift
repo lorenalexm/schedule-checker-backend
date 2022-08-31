@@ -53,7 +53,41 @@ final class AssignmentTests: XCTestCase {
             XCTAssertEqual(response.status, .ok)
             
             let retreived = try response.content.decode([Assignment].self)
-            XCTAssertEqual(retreived.count, 15)
+            XCTAssertEqual(retreived.count, 20)
+        })
+    }
+    
+    /// Verifies that only unscheduled assignments are retreived from the database.
+    func testUnscheduledAssignmentsRetrievedFromAPI() throws {
+        var assignments: [Assignment] = []
+        for index in 0...20 {
+            let date = Date.randomBetween(start: "2022-01-01", end: "2022-09-15")
+            let newAssignment = try Assignment.create(submittedOn: date, scheduled: index.isMultiple(of: 2), hidden: false, on: app.db)
+            assignments.append(newAssignment)
+        }
+        
+        try app.test(.GET, "/api/assignments/scheduled/false", afterResponse: { response in
+            XCTAssertEqual(response.status, .ok)
+            
+            let retreived = try response.content.decode([Assignment].self)
+            XCTAssertEqual(retreived.count, assignments.count / 2)
+        })
+    }
+    
+    /// Verifies that only scheduled assignments are retreived from the database.
+    func testScheduledAssignmentsRetrievedFromAPI() throws {
+        var assignments: [Assignment] = []
+        for index in 0...20 {
+            let date = Date.randomBetween(start: "2022-01-01", end: "2022-09-15")
+            let newAssignment = try Assignment.create(submittedOn: date, scheduled: !index.isMultiple(of: 2), hidden: false, on: app.db)
+            assignments.append(newAssignment)
+        }
+        
+        try app.test(.GET, "/api/assignments/scheduled/true", afterResponse: { response in
+            XCTAssertEqual(response.status, .ok)
+            
+            let retreived = try response.content.decode([Assignment].self)
+            XCTAssertEqual(retreived.count, assignments.count / 2)
         })
     }
     
