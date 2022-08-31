@@ -33,7 +33,7 @@ struct AssignmentController: RouteCollection {
     func get(req: Request) async throws -> [Assignment] {
         return try await Assignment.query(on: req.db)
             .filter(\.$hidden == false)
-            .limit(15)
+            .limit(20)
             .sort(\.$submittedOn, .descending)
             .all()
     }
