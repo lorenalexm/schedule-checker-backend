@@ -23,7 +23,7 @@ struct AssignmentController: RouteCollection {
 		assignments.post(use: create)
 		assignments.post("batch", use: batchCreate)
 		assignments.post(":id", "hide", ":hidden", use: hide)
-        assignments.post(":id", "schedule", ":scheduled", use: scheduled)
+        assignments.post(":id", "schedule", ":scheduled", use: schedule)
 		//assignments.delete(":id", use: delete)
 	}
     
@@ -140,7 +140,7 @@ struct AssignmentController: RouteCollection {
     /// Sets the scheduled value of an `Assignment` object already within the database.
     /// - Parameter req: The `Request` object received.
     /// - Returns: An `HTTPStatus` value reflecting the success of the update.
-    func scheduled(req: Request) async throws -> HTTPStatus {
+    func schedule(req: Request) async throws -> HTTPStatus {
         guard let id = req.parameters.get("id"),
               let uuid = UUID(uuidString: id) else {
             throw Abort(.badRequest, reason: "No valid 'id' parameter sent with request.")
