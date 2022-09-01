@@ -33,7 +33,7 @@ struct AssignmentController: RouteCollection {
     func get(req: Request) async throws -> [Assignment] {
         return try await Assignment.query(on: req.db)
             .filter(\.$hidden == false)
-            .limit(20)
+            .limit(25)
             .sort(\.$submittedOn, .descending)
             .all()
     }
@@ -50,7 +50,8 @@ struct AssignmentController: RouteCollection {
 	}
 	
     /// Fetches a limited number of `Assignment` objects from the database.
-    /// These objects are all flagged as scheduled.
+    /// These objects will all be flagged as either scheduled or unscheduled, depending on the parameter given.
+    /// Hidden objects are not returned.
     /// - Parameter req: The `Request` object received.
     /// - Throws: If fails to query from the database.
     /// - Returns: An array of all the `Assignment` objects.
@@ -63,7 +64,7 @@ struct AssignmentController: RouteCollection {
         return try await Assignment.query(on: req.db)
             .filter(\.$hidden == false)
             .filter(\.$scheduled == scheduled)
-            .limit(20)
+            .limit(25)
             .sort(\.$submittedOn, .descending)
             .all()
     }
