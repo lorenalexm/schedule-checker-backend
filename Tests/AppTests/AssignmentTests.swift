@@ -43,7 +43,7 @@ final class AssignmentTests: XCTestCase {
     /// Verifies that the number retrieved does not excede the limit.
     func testLimitedAssignmentsRetrievedFromAPI() throws {
         var assignments: [Assignment] = []
-        for _ in 0...20 {
+        for _ in 0...30 {
             let date = Date.randomBetween(start: "2022-01-01", end: "2022-09-15")
             let newAssignment = try Assignment.create(submittedOn: date, scheduled: false, hidden: false, on: app.db)
             assignments.append(newAssignment)
@@ -53,7 +53,7 @@ final class AssignmentTests: XCTestCase {
             XCTAssertEqual(response.status, .ok)
             
             let retreived = try response.content.decode([Assignment].self)
-            XCTAssertEqual(retreived.count, 20)
+            XCTAssertEqual(retreived.count, 25)
         })
     }
     
