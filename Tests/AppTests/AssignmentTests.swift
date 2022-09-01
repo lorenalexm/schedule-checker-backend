@@ -62,7 +62,7 @@ final class AssignmentTests: XCTestCase {
         var assignments: [Assignment] = []
         for index in 0...20 {
             let date = Date.randomBetween(start: "2022-01-01", end: "2022-09-15")
-            let newAssignment = try Assignment.create(submittedOn: date, scheduled: index.isMultiple(of: 2), hidden: false, on: app.db)
+            let newAssignment = try Assignment.create(submittedOn: date, scheduled: index.isMultiple(of: 2), hidden: index.isMultiple(of: 3), on: app.db)
             assignments.append(newAssignment)
         }
         
@@ -70,7 +70,9 @@ final class AssignmentTests: XCTestCase {
             XCTAssertEqual(response.status, .ok)
             
             let retreived = try response.content.decode([Assignment].self)
-            XCTAssertEqual(retreived.count, assignments.count / 2)
+            XCTAssertEqual(retreived.count, 7)
+            let hidden = retreived.filter({ $0.hidden == true })
+            XCTAssertEqual(hidden.count, 0)
         })
     }
     
@@ -79,7 +81,7 @@ final class AssignmentTests: XCTestCase {
         var assignments: [Assignment] = []
         for index in 0...20 {
             let date = Date.randomBetween(start: "2022-01-01", end: "2022-09-15")
-            let newAssignment = try Assignment.create(submittedOn: date, scheduled: !index.isMultiple(of: 2), hidden: false, on: app.db)
+            let newAssignment = try Assignment.create(submittedOn: date, scheduled: !index.isMultiple(of: 2), hidden: index.isMultiple(of: 3), on: app.db)
             assignments.append(newAssignment)
         }
         
@@ -87,7 +89,9 @@ final class AssignmentTests: XCTestCase {
             XCTAssertEqual(response.status, .ok)
             
             let retreived = try response.content.decode([Assignment].self)
-            XCTAssertEqual(retreived.count, assignments.count / 2)
+            XCTAssertEqual(retreived.count, 7)
+            let hidden = retreived.filter({ $0.hidden == true })
+            XCTAssertEqual(hidden.count, 0)
         })
     }
     
