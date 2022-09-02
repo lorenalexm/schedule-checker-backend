@@ -33,7 +33,7 @@ struct AssignmentController: RouteCollection {
     func get(req: Request) async throws -> [Assignment] {
         return try await Assignment.query(on: req.db)
             .filter(\.$hidden == false)
-            .limit(25)
+            .limit(100)
             .sort(\.$submittedOn, .descending)
             .all()
     }
@@ -64,7 +64,7 @@ struct AssignmentController: RouteCollection {
         return try await Assignment.query(on: req.db)
             .filter(\.$hidden == false)
             .filter(\.$scheduled == scheduled)
-            .limit(25)
+            .limit(100)
             .sort(\.$submittedOn, .descending)
             .all()
     }
